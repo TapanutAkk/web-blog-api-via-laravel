@@ -1,5 +1,4 @@
 # Setup Project
-```
 ## Create .env File
 Copy .env.example file and replace name with .env instead.
 ## Install Packages
