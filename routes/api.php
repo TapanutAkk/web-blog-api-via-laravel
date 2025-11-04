@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\BlogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +20,11 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('user', [UserController::class, 'index']);
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('blog')->group(function () {
+        Route::get('', [BlogController::class, 'index']);
+        Route::get('{id}', [BlogController::class, 'show']);
+    });
 });
