@@ -30,5 +30,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('me/blog')->group(function () {
         Route::get('', [BlogController::class, 'myBlogs']);
+        Route::post('', [BlogController::class, 'save']);
     });
 });

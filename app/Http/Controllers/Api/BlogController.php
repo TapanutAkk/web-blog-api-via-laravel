@@ -8,6 +8,7 @@ use App\Models\Blog;
 use App\Traits\ApiResponse;
 use App\Http\Resources\BlogResource;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\BlogRequest;
 
 class BlogController extends Controller
 {
@@ -62,6 +63,33 @@ class BlogController extends Controller
 
         } catch (\Exception $e) {
             return $this->error('เกิดข้อผิดพลาดในการเรียกข้อมูล Blog ส่วนตัว: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function save(Request $request)
+    {
+        try {
+            $request->validate([
+                'title' => ['required'],
+                'content' => ['required'],
+            ], [
+                'title.required' => 'กรุณากรอกหัวข้อ Blog.',
+                'content.required' => 'กรุณากรอกเนื้อหา Blog.',
+            ]);
+
+            $user = Auth::user();
+
+            $blog = new Blog();
+            $blog->title = $request->title;
+            $blog->content = $request->content;
+            $blog->is_published = $request->input('is_published', false);
+            $blog->user_id = $user->id;
+            $blog->save();
+
+            return $this->success(new BlogResource($blog), "สร้าง Blog สำเร็จ");
+
+        } catch (\Exception $e) {
+            return $this->error('เกิดข้อผิดพลาดในการสร้าง Blog: ' . $e->getMessage(), 500);
         }
     }
 }
