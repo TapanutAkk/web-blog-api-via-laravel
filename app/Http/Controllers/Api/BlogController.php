@@ -8,7 +8,6 @@ use App\Models\Blog;
 use App\Traits\ApiResponse;
 use App\Http\Resources\BlogResource;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\BlogRequest;
 
 class BlogController extends Controller
 {
@@ -84,6 +83,37 @@ class BlogController extends Controller
             $blog->content = $request->content;
             $blog->is_published = $request->input('is_published', false);
             $blog->user_id = $user->id;
+            $blog->save();
+
+            return $this->success(new BlogResource($blog), "สร้าง Blog สำเร็จ");
+
+        } catch (\Exception $e) {
+            return $this->error('เกิดข้อผิดพลาดในการสร้าง Blog: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'title' => ['required'],
+                'content' => ['required'],
+            ], [
+                'title.required' => 'กรุณากรอกหัวข้อ Blog.',
+                'content.required' => 'กรุณากรอกเนื้อหา Blog.',
+            ]);
+
+            $user = Auth::user();
+
+            $blog = Blog::where('id', $id)->where('user_id', $user->id)->first();
+
+            if(! $blog) {
+                return $this->error('ไม่พบบทความนี้', 404);
+            }
+
+            $blog->title = $request->title;
+            $blog->content = $request->content;
+            $blog->is_published = $request->input('is_published', false);
             $blog->save();
 
             return $this->success(new BlogResource($blog), "สร้าง Blog สำเร็จ");
