@@ -27,4 +27,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('', [BlogController::class, 'index']);
         Route::get('{id}', [BlogController::class, 'show']);
     });
+
+    Route::prefix('me/blog')->group(function () {
+        Route::get('', [BlogController::class, 'myBlogs']);
+    });
 });
